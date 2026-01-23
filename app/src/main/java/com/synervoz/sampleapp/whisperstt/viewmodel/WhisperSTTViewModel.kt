@@ -23,10 +23,8 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
 
     private val statsUpdateRunnable = object : Runnable {
         override fun run() {
-            if (isRunning.value == true) {
-                val stats = systemMonitor.getCurrentStats()
-                systemStats.postValue(systemMonitor.formatStats(stats))
-            }
+            val stats = systemMonitor.getCurrentStats()
+            systemStats.postValue(systemMonitor.formatStats(stats))
             handler.postDelayed(this, 1000)
         }
     }
@@ -45,6 +43,10 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         }
     )
 
+    init {
+        handler.post(statsUpdateRunnable)
+    }
+
     fun initialize() {
         val success = switchboardManager.initialize("", "")
         if (success) {
@@ -56,7 +58,6 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         val success = switchboardManager.start()
         if (success) {
             isRunning.postValue(true)
-            handler.post(statsUpdateRunnable)
         }
     }
 
@@ -64,8 +65,6 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         val success = switchboardManager.stop()
         if (success) {
             isRunning.postValue(false)
-            handler.removeCallbacks(statsUpdateRunnable)
-            systemStats.postValue("CPU: -- | Memory: --")
         }
     }
 
@@ -83,5 +82,10 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
 
     fun clearError() {
         error.postValue(null)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        handler.removeCallbacks(statsUpdateRunnable)
     }
 }

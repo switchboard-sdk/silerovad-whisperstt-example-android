@@ -386,21 +386,17 @@ fun TranscriptionSection(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.small
     ) {
-        Column(
-            modifier = Modifier.padding(Dimensions.cardPadding)
+        LazyColumn(
+            state = listState,
+            verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacingSmall),
+            contentPadding = PaddingValues(Dimensions.cardPadding),
+            modifier = Modifier.fillMaxSize()
         ) {
-
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacingSmall),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                items(
-                    items = transcriptions,
-                    key = { it.timestamp }
-                ) { transcription ->
-                    TranscriptionItem(transcription = transcription)
-                }
+            items(
+                items = transcriptions,
+                key = { it.timestamp }
+            ) { transcription ->
+                TranscriptionItem(transcription = transcription)
             }
         }
     }
