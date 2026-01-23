@@ -1,0 +1,380 @@
+package com.synervoz.sampleapp.whisperstt.ui
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.synervoz.sampleapp.whisperstt.data.TranscriptionItem
+import com.synervoz.sampleapp.whisperstt.data.WhisperModel
+import com.synervoz.sampleapp.whisperstt.viewmodel.WhisperSTTViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WhisperSTTScreen(
+    viewModel: WhisperSTTViewModel = viewModel()
+) {
+    val transcriptions by viewModel.transcriptions.observeAsState(emptyList())
+    val vadState by viewModel.vadState.observeAsState("--")
+    val isRunning by viewModel.isRunning.observeAsState(false)
+    val isInitialized by viewModel.isInitialized.observeAsState(false)
+    val error by viewModel.error.observeAsState()
+
+    var vadThreshold by remember { mutableFloatStateOf(0.6f) }
+    var minSilenceDuration by remember { mutableIntStateOf(100) }
+    var selectedModel by remember { mutableStateOf(WhisperModel.TINY) }
+
+    LaunchedEffect(Unit) {
+        if (!isInitialized) {
+            viewModel.initialize()
+        }
+    }
+
+    error?.let { errorMsg ->
+        LaunchedEffect(errorMsg) {
+            viewModel.clearError()
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = "Whisper STT Example",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+
+        VadStateCard(vadState = vadState)
+
+        ControlsSection(
+            vadThreshold = vadThreshold,
+            onVadThresholdChange = {
+                vadThreshold = it
+                viewModel.updateVadThreshold(it)
+            },
+            minSilenceDuration = minSilenceDuration,
+            onMinSilenceDurationChange = {
+                minSilenceDuration = it
+                viewModel.updateMinSilenceDuration(it)
+            },
+            selectedModel = selectedModel,
+            onModelChange = {
+                selectedModel = it
+                viewModel.setWhisperModel(it)
+            },
+            isRunning = isRunning,
+            isInitialized = isInitialized,
+            onStart = { viewModel.start() },
+            onStop = { viewModel.stop() }
+        )
+
+        TranscriptionSection(
+            transcriptions = transcriptions,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+fun VadStateCard(vadState: String) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "VAD State",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = vadState,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@Composable
+fun ControlsSection(
+    vadThreshold: Float,
+    onVadThresholdChange: (Float) -> Unit,
+    minSilenceDuration: Int,
+    onMinSilenceDurationChange: (Int) -> Unit,
+    selectedModel: WhisperModel,
+    onModelChange: (WhisperModel) -> Unit,
+    isRunning: Boolean,
+    isInitialized: Boolean,
+    onStart: () -> Unit,
+    onStop: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "Controls",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium
+            )
+
+            ThresholdControl(
+                label = "VAD Threshold",
+                value = vadThreshold,
+                onValueChange = onVadThresholdChange,
+                range = 0.1f..1.0f,
+                step = 0.1f
+            )
+
+            DurationControl(
+                label = "Min Silence Duration (ms)",
+                value = minSilenceDuration,
+                onValueChange = onMinSilenceDurationChange,
+                range = 50..500,
+                step = 50
+            )
+
+            ModelSelection(
+                selectedModel = selectedModel,
+                onModelChange = onModelChange
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = onStart,
+                    enabled = isInitialized && !isRunning,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Start")
+                }
+
+                Button(
+                    onClick = onStop,
+                    enabled = isRunning,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Stop")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ThresholdControl(
+    label: String,
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    range: ClosedFloatingPointRange<Float>,
+    step: Float
+) {
+    Column {
+        Text(
+            text = "$label: ${String.format("%.1f", value)}",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = {
+                    val newValue = (value - step).coerceIn(range)
+                    onValueChange(newValue)
+                },
+                enabled = value > range.start
+            ) {
+                Text("-")
+            }
+
+            Text(
+                text = String.format("%.1f", value),
+                modifier = Modifier.width(60.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Button(
+                onClick = {
+                    val newValue = (value + step).coerceIn(range)
+                    onValueChange(newValue)
+                },
+                enabled = value < range.endInclusive
+            ) {
+                Text("+")
+            }
+        }
+    }
+}
+
+@Composable
+fun DurationControl(
+    label: String,
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    range: IntRange,
+    step: Int
+) {
+    Column {
+        Text(
+            text = "$label: $value",
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = {
+                    val newValue = (value - step).coerceIn(range)
+                    onValueChange(newValue)
+                },
+                enabled = value > range.first
+            ) {
+                Text("-")
+            }
+
+            Text(
+                text = value.toString(),
+                modifier = Modifier.width(60.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Button(
+                onClick = {
+                    val newValue = (value + step).coerceIn(range)
+                    onValueChange(newValue)
+                },
+                enabled = value < range.last
+            ) {
+                Text("+")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ModelSelection(
+    selectedModel: WhisperModel,
+    onModelChange: (WhisperModel) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column {
+        Text(
+            text = "Whisper Model",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = selectedModel.displayName,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor()
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                WhisperModel.values().forEach { model ->
+                    DropdownMenuItem(
+                        text = { Text(model.displayName) },
+                        onClick = {
+                            onModelChange(model)
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TranscriptionSection(
+    transcriptions: List<TranscriptionItem>,
+    modifier: Modifier = Modifier
+) {
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(transcriptions.size) {
+        if (transcriptions.isNotEmpty()) {
+            listState.animateScrollToItem(transcriptions.size - 1)
+        }
+    }
+
+    Card(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Transcriptions",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyColumn(
+                state = listState,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(transcriptions) { transcription ->
+                    TranscriptionItem(transcription = transcription)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TranscriptionItem(
+    transcription: TranscriptionItem
+) {
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Text(
+                text = transcription.text,
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                text = "Processing time: ${transcription.processingTimeMs}ms",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
