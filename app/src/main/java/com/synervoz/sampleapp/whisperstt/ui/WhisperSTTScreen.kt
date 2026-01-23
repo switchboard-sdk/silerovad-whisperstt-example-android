@@ -76,17 +76,33 @@ fun WhisperSTTScreen(
             onModelChange = {
                 selectedModel = it
                 viewModel.setWhisperModel(it)
-            },
-            isRunning = isRunning,
-            isInitialized = isInitialized,
-            onStart = { viewModel.start() },
-            onStop = { viewModel.stop() }
+            }
         )
 
         TranscriptionSection(
             transcriptions = transcriptions,
             modifier = Modifier.weight(1f)
         )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Button(
+                onClick = { viewModel.start() },
+                enabled = !isRunning,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Start")
+            }
+
+            Button(
+                onClick = { viewModel.stop() },
+                enabled = isRunning,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Stop")
+            }
+        }
     }
 }
 
@@ -145,11 +161,7 @@ fun VadStateCard(
 @Composable
 fun ControlsSection(
     selectedModel: WhisperModel,
-    onModelChange: (WhisperModel) -> Unit,
-    isRunning: Boolean,
-    isInitialized: Boolean,
-    onStart: () -> Unit,
-    onStop: () -> Unit
+    onModelChange: (WhisperModel) -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth()
@@ -179,26 +191,6 @@ fun ControlsSection(
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(end = 12.dp)
                 )
-            }
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Button(
-                    onClick = onStart,
-                    enabled = !isRunning,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Start")
-                }
-
-                Button(
-                    onClick = onStop,
-                    enabled = isRunning,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Text("Stop")
-                }
             }
         }
     }
@@ -235,7 +227,7 @@ fun ThresholdControl(
         Text(
             text = String.format("%.1f", value),
             modifier = Modifier.width(40.dp),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
         )
 
         IconButton(
@@ -468,11 +460,7 @@ fun ControlsSectionPreview() {
     MaterialTheme {
         ControlsSection(
             selectedModel = WhisperModel.TINY,
-            onModelChange = {},
-            isRunning = false,
-            isInitialized = true,
-            onStart = {},
-            onStop = {}
+            onModelChange = {}
         )
     }
 }
