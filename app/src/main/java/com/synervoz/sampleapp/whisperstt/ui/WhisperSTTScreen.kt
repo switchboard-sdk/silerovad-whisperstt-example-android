@@ -1,10 +1,14 @@
 package com.synervoz.sampleapp.whisperstt.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -18,7 +22,6 @@ import com.synervoz.sampleapp.whisperstt.data.TranscriptionItem
 import com.synervoz.sampleapp.whisperstt.data.WhisperModel
 import com.synervoz.sampleapp.whisperstt.viewmodel.WhisperSTTViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WhisperSTTScreen(
     viewModel: WhisperSTTViewModel = viewModel()
@@ -48,8 +51,8 @@ fun WhisperSTTScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+            .padding(Dimensions.screenPadding),
+        verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacing)
     ) {
         Text(
             text = "Whisper STT Example",
@@ -71,7 +74,7 @@ fun WhisperSTTScreen(
             }
         )
 
-        ControlsSection(
+        WhisperSection(
             selectedModel = selectedModel,
             onModelChange = {
                 selectedModel = it
@@ -84,24 +87,17 @@ fun WhisperSTTScreen(
             modifier = Modifier.weight(1f)
         )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        Button(
+            onClick = {
+                if (isRunning) {
+                    viewModel.stop()
+                } else {
+                    viewModel.start()
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Button(
-                onClick = { viewModel.start() },
-                enabled = !isRunning,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Start")
-            }
-
-            Button(
-                onClick = { viewModel.stop() },
-                enabled = isRunning,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Stop")
-            }
+            Text(if (isRunning) "Stop" else "Start")
         }
     }
 }
@@ -118,13 +114,11 @@ fun VadStateCard(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-//            verticalArrangement = Arrangement.spacedBy(0.dp)
+            modifier = Modifier.padding(Dimensions.cardPadding),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 12.dp),
+                modifier = Modifier.fillMaxWidth().height(Dimensions.controlRowHeight)
             ) {
                 Text(
                     text = "VAD State:",
@@ -135,7 +129,7 @@ fun VadStateCard(
                     text = vadState,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 12.dp)
+                    modifier = Modifier.padding(end = Dimensions.endPadding)
                 )
             }
 
@@ -159,7 +153,7 @@ fun VadStateCard(
 }
 
 @Composable
-fun ControlsSection(
+fun WhisperSection(
     selectedModel: WhisperModel,
     onModelChange: (WhisperModel) -> Unit
 ) {
@@ -167,8 +161,7 @@ fun ControlsSection(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
-//            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(Dimensions.cardPadding),
         ) {
             ModelSelection(
                 selectedModel = selectedModel,
@@ -177,8 +170,8 @@ fun ControlsSection(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().height(Dimensions.controlRowHeight)
+                    .padding(vertical = Dimensions.smallPadding),
             ) {
                 Text(
                     text = "Whisper Backend:",
@@ -189,7 +182,7 @@ fun ControlsSection(
                     text = "CPU",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 12.dp)
+                    modifier = Modifier.padding(end = Dimensions.endPadding)
                 )
             }
         }
@@ -206,7 +199,7 @@ fun ThresholdControl(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
         Text(
             text = "$label:",
@@ -226,7 +219,7 @@ fun ThresholdControl(
 
         Text(
             text = String.format("%.1f", value),
-            modifier = Modifier.width(40.dp),
+            modifier = Modifier.width(Dimensions.valueDisplayWidth),
             style = MaterialTheme.typography.bodyMedium,
         )
 
@@ -252,7 +245,7 @@ fun DurationControl(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
         Text(
             text = "$label:",
@@ -272,7 +265,7 @@ fun DurationControl(
 
         Text(
             text = "${value}ms",
-            modifier = Modifier.width(60.dp),
+            modifier = Modifier.width(Dimensions.durationDisplayWidth),
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -288,7 +281,6 @@ fun DurationControl(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModelSelection(
     selectedModel: WhisperModel,
@@ -298,7 +290,7 @@ fun ModelSelection(
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
         Text(
             text = "Whisper Model:",
@@ -306,32 +298,29 @@ fun ModelSelection(
             modifier = Modifier.weight(1f)
         )
 
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
-            Card(
+        Box {
+            Row(
                 modifier = Modifier
-                    .menuAnchor()
-                    .width(120.dp),
-                onClick = { expanded = !expanded }
+                    .width(Dimensions.dropdownWidth)
+                    .clickable { expanded = true }
+                    .padding(Dimensions.smallPadding),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = selectedModel.displayName,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                }
+                Text(
+                    text = selectedModel.displayName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.width(Dimensions.smallSpacing))
+                Icon(
+                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimensions.iconSize)
+                )
             }
 
-            ExposedDropdownMenu(
+            DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {
@@ -366,19 +355,12 @@ fun TranscriptionSection(
         modifier = modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(Dimensions.cardPadding)
         ) {
-            Text(
-                text = "Transcriptions",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(
                 state = listState,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
@@ -403,7 +385,7 @@ fun TranscriptionItem(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(12.dp),
+            modifier = Modifier.padding(Dimensions.cardPadding),
         ) {
             Text(
                 text = transcription.text,
@@ -456,9 +438,9 @@ fun TranscriptionItemPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun ControlsSectionPreview() {
+fun WhisperSectionPreview() {
     MaterialTheme {
-        ControlsSection(
+        WhisperSection(
             selectedModel = WhisperModel.TINY,
             onModelChange = {}
         )
@@ -475,7 +457,7 @@ fun TranscriptionSectionPreview() {
                 TranscriptionItem("Second transcription with a longer text that might wrap to multiple lines", 200),
                 TranscriptionItem("Third transcription", 95)
             ),
-            modifier = Modifier.height(400.dp)
+            modifier = Modifier.height(400.dp) // Preview height
         )
     }
 }

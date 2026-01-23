@@ -47,10 +47,12 @@ dependencies {
     implementation libs.androidx.compose.ui.graphics
     implementation libs.androidx.compose.ui.tooling.preview
     implementation libs.androidx.compose.material3
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material:material-icons-core'
 
     // ViewModel and Compose integration
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
-    implementation 'androidx.compose.runtime:runtime-livedata:1.5.4'
+    implementation 'androidx.compose.runtime:runtime-livedata'
 
     // JSON parsing
     implementation 'com.google.code.gson:gson:2.10.1'
