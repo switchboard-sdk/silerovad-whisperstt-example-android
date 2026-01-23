@@ -31,3 +31,5 @@ google-services.json
 
 # Android Profiling
 *.hprof
+app/src/main/assets/model/ggml-base.en.bin
+app/src/main/assets/model/ggml-tiny.en.bin
