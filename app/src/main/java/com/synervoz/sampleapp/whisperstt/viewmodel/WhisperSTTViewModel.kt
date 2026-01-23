@@ -1,10 +1,13 @@
 package com.synervoz.sampleapp.whisperstt.viewmodel
 
 import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.synervoz.sampleapp.whisperstt.data.*
 import com.synervoz.sampleapp.whisperstt.switchboard.SwitchboardManager
+import com.synervoz.sampleapp.whisperstt.utils.SystemMonitor
 
 class WhisperSTTViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -13,6 +16,20 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
     val isRunning = MutableLiveData<Boolean>(false)
     val isInitialized = MutableLiveData<Boolean>(false)
     val error = MutableLiveData<String?>()
+    val systemStats = MutableLiveData<String>("CPU: -- | Memory: --")
+
+    private val systemMonitor = SystemMonitor(application)
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val statsUpdateRunnable = object : Runnable {
+        override fun run() {
+            if (isRunning.value == true) {
+                val stats = systemMonitor.getCurrentStats()
+                systemStats.postValue(systemMonitor.formatStats(stats))
+            }
+            handler.postDelayed(this, 1000)
+        }
+    }
 
     private val switchboardManager = SwitchboardManager(
         context = application,
@@ -39,6 +56,7 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         val success = switchboardManager.start()
         if (success) {
             isRunning.postValue(true)
+            handler.post(statsUpdateRunnable)
         }
     }
 
@@ -46,6 +64,8 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         val success = switchboardManager.stop()
         if (success) {
             isRunning.postValue(false)
+            handler.removeCallbacks(statsUpdateRunnable)
+            systemStats.postValue("CPU: -- | Memory: --")
         }
     }
 

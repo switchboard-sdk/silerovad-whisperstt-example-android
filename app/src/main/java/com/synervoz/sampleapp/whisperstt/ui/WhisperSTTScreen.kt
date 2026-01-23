@@ -32,6 +32,7 @@ fun WhisperSTTScreen(
     val isRunning by viewModel.isRunning.observeAsState(false)
     val isInitialized by viewModel.isInitialized.observeAsState(false)
     val error by viewModel.error.observeAsState()
+    val systemStats by viewModel.systemStats.observeAsState("CPU: -- | Memory: --")
 
     var vadThreshold by remember { mutableFloatStateOf(0.6f) }
     var minSilenceDuration by remember { mutableIntStateOf(100) }
@@ -81,6 +82,10 @@ fun WhisperSTTScreen(
                 selectedModel = it
                 viewModel.setWhisperModel(it)
             }
+        )
+
+        SystemStatsCard(
+            systemStats = systemStats
         )
 
         TranscriptionSection(
@@ -144,7 +149,7 @@ fun VadStateCard(
                 step = 0.1f
             )
 
-            DurationControl(
+            MinSilenceDurationControl(
                 label = "Min Silence Duration",
                 value = minSilenceDuration,
                 onValueChange = onMinSilenceDurationChange,
@@ -188,6 +193,29 @@ fun WhisperSection(
                     modifier = Modifier.padding(end = Dimensions.endPadding)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SystemStatsCard(
+    systemStats: String
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Dimensions.cardPadding)
+                .height(Dimensions.controlRowHeight)
+        ) {
+            Text(
+                text = systemStats,
+                style = MaterialTheme.typography.bodyMedium
+            )
         }
     }
 }
@@ -240,7 +268,7 @@ fun ThresholdControl(
 }
 
 @Composable
-fun DurationControl(
+fun MinSilenceDurationControl(
     label: String,
     value: Int,
     onValueChange: (Int) -> Unit,
