@@ -364,7 +364,7 @@ fun TranscriptionSection(
 
             LazyColumn(
                 state = listState,
-                verticalArrangement = Arrangement.spacedBy(Dimensions.horizontalSpacing),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.verticalSpacingSmall),
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(
@@ -398,7 +398,7 @@ fun TranscriptionItem(
             )
 
             Text(
-                text = "Transcription time: ${transcription.processingTimeMs}ms",
+                text = "Transcription time: %.2f s".format(transcription.processingTimeMs / 1000.0),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
