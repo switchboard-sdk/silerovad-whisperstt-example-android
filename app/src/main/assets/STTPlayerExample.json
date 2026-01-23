@@ -1,0 +1,76 @@
+{
+  "type": "Realtime",
+  "config": {
+    "microphoneEnabled": true,
+    "graph": {
+      "config": {
+        "sampleRate": 16000,
+        "bufferSize": 512
+      },
+      "nodes": [
+        {
+          "id": "audioPlayerNode",
+          "type": "AudioPlayer"
+        },
+        {
+          "id": "mixerNode",
+          "type": "Mixer"
+        },
+        {
+          "id": "multiChannelToMonoNode",
+          "type": "MultiChannelToMono"
+        },
+        {
+          "id": "busSplitterNode",
+          "type": "BusSplitter"
+        },
+        {
+          "id": "vadNode",
+          "type": "SileroVAD.VAD",
+          "config": {
+            "frameSize": 512,
+            "threshold": 0.6
+          }
+        },
+        {
+          "id": "sttNode",
+          "type": "Whisper.STT",
+          "config": {
+            "initializeModel": false,
+            "useGPU": false
+          }
+        }
+      ],
+      "connections": [
+        {
+          "sourceNode": "inputNode",
+          "destinationNode": "mixerNode"
+        },
+        {
+          "sourceNode": "audioPlayerNode",
+          "destinationNode": "mixerNode"
+        },
+        {
+          "sourceNode": "mixerNode",
+          "destinationNode": "multiChannelToMonoNode"
+        },
+        {
+          "sourceNode": "multiChannelToMonoNode",
+          "destinationNode": "busSplitterNode"
+        },
+        {
+          "sourceNode": "busSplitterNode",
+          "destinationNode": "vadNode"
+        },
+        {
+          "sourceNode": "busSplitterNode",
+          "destinationNode": "sttNode"
+        },
+        {
+          "sourceNode": "vadNode.speechEnded",
+          "destinationNode": "sttNode.transcribe"
+        }
+      ]
+    }
+  }
+}

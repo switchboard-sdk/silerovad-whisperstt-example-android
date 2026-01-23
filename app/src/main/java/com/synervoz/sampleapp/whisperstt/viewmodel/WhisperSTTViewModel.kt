@@ -18,34 +18,34 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         context = application,
         onTranscription = { transcription ->
             val current = transcriptions.value ?: emptyList()
-            transcriptions.value = current + transcription
+            transcriptions.postValue(current + transcription)
         },
         onVadStateChange = { state ->
-            vadState.value = state
+            vadState.postValue(state)
         },
         onError = { errorMsg ->
-            error.value = errorMsg
+            error.postValue(errorMsg)
         }
     )
 
     fun initialize() {
-        val success = switchboardManager.initialize("your_app_id", "your_app_secret")
+        val success = switchboardManager.initialize("", "")
         if (success) {
-            isInitialized.value = true
+            isInitialized.postValue(true)
         }
     }
 
     fun start() {
         val success = switchboardManager.start()
         if (success) {
-            isRunning.value = true
+            isRunning.postValue(true)
         }
     }
 
     fun stop() {
         val success = switchboardManager.stop()
         if (success) {
-            isRunning.value = false
+            isRunning.postValue(false)
         }
     }
 
@@ -62,6 +62,6 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun clearError() {
-        error.value = null
+        error.postValue(null)
     }
 }
