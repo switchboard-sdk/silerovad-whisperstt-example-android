@@ -1,6 +1,7 @@
 package com.synervoz.sampleapp.whisperstt.ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -131,7 +132,7 @@ fun ControlsSection(
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             ThresholdControl(
                 label = "VAD Threshold",
@@ -380,7 +381,10 @@ fun TranscriptionSection(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(transcriptions) { transcription ->
+                items(
+                    items = transcriptions,
+                    key = { it.timestamp }
+                ) { transcription ->
                     TranscriptionItem(transcription = transcription)
                 }
             }
@@ -394,11 +398,12 @@ fun TranscriptionItem(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+        ),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(12.dp)
+            modifier = Modifier.padding(12.dp),
         ) {
             Text(
                 text = transcription.text,
