@@ -131,7 +131,7 @@ fun ControlsSection(
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ThresholdControl(
                 label = "VAD Threshold",
@@ -157,6 +157,7 @@ fun ControlsSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = 8.dp),
             ) {
                 Text(
                     text = "Whisper Backend:",
@@ -166,7 +167,8 @@ fun ControlsSection(
                 Text(
                     text = "CPU",
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(end = 12.dp)
                 )
             }
 
@@ -305,20 +307,28 @@ fun ModelSelection(
 
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded },
-            modifier = Modifier.height(48.dp)
+            onExpandedChange = { expanded = !expanded }
         ) {
-            OutlinedTextField(
-                value = selectedModel.displayName,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            Card(
                 modifier = Modifier
                     .menuAnchor()
                     .width(120.dp),
-                singleLine = true,
-                textStyle = MaterialTheme.typography.bodySmall
-            )
+                onClick = { expanded = !expanded }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = selectedModel.displayName,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                }
+            }
 
             ExposedDropdownMenu(
                 expanded = expanded,
