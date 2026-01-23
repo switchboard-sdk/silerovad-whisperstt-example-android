@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.synervoz.sampleapp.whisperstt.data.TranscriptionItem
 import com.synervoz.sampleapp.whisperstt.data.WhisperModel
@@ -49,11 +48,11 @@ fun WhisperSTTScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = "Whisper STT Example",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
 
@@ -93,17 +92,22 @@ fun VadStateCard(vadState: String) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "VAD State",
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium
             )
             Text(
                 text = vadState,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -126,15 +130,9 @@ fun ControlsSection(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(
-                text = "Controls",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Medium
-            )
-
             ThresholdControl(
                 label = "VAD Threshold",
                 value = vadThreshold,
@@ -157,11 +155,27 @@ fun ControlsSection(
             )
 
             Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Whisper Backend:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "CPU",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Button(
                     onClick = onStart,
-                    enabled = isInitialized && !isRunning,
+                    enabled = !isRunning,
                     modifier = Modifier.weight(1f)
                 ) {
                     Text("Start")
@@ -187,40 +201,40 @@ fun ThresholdControl(
     range: ClosedFloatingPointRange<Float>,
     step: Float
 ) {
-    Column {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
-            text = "$label: ${String.format("%.1f", value)}",
+            text = "$label:",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f)
+        )
+
+        IconButton(
+            onClick = {
+                val newValue = (value - step).coerceIn(range)
+                onValueChange(newValue)
+            },
+            enabled = value > range.start
+        ) {
+            Text("-", style = MaterialTheme.typography.titleLarge)
+        }
+
+        Text(
+            text = String.format("%.1f", value),
+            modifier = Modifier.width(40.dp),
             style = MaterialTheme.typography.bodyMedium
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+        IconButton(
+            onClick = {
+                val newValue = (value + step).coerceIn(range)
+                onValueChange(newValue)
+            },
+            enabled = value < range.endInclusive
         ) {
-            Button(
-                onClick = {
-                    val newValue = (value - step).coerceIn(range)
-                    onValueChange(newValue)
-                },
-                enabled = value > range.start
-            ) {
-                Text("-")
-            }
-
-            Text(
-                text = String.format("%.1f", value),
-                modifier = Modifier.width(60.dp),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Button(
-                onClick = {
-                    val newValue = (value + step).coerceIn(range)
-                    onValueChange(newValue)
-                },
-                enabled = value < range.endInclusive
-            ) {
-                Text("+")
-            }
+            Text("+", style = MaterialTheme.typography.titleLarge)
         }
     }
 }
@@ -233,40 +247,40 @@ fun DurationControl(
     range: IntRange,
     step: Int
 ) {
-    Column {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
-            text = "$label: $value",
+            text = "$label:",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f)
+        )
+
+        IconButton(
+            onClick = {
+                val newValue = (value - step).coerceIn(range)
+                onValueChange(newValue)
+            },
+            enabled = value > range.first
+        ) {
+            Text("-", style = MaterialTheme.typography.titleLarge)
+        }
+
+        Text(
+            text = "${value}ms",
+            modifier = Modifier.width(60.dp),
             style = MaterialTheme.typography.bodyMedium
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+
+        IconButton(
+            onClick = {
+                val newValue = (value + step).coerceIn(range)
+                onValueChange(newValue)
+            },
+            enabled = value < range.last
         ) {
-            Button(
-                onClick = {
-                    val newValue = (value - step).coerceIn(range)
-                    onValueChange(newValue)
-                },
-                enabled = value > range.first
-            ) {
-                Text("-")
-            }
-
-            Text(
-                text = value.toString(),
-                modifier = Modifier.width(60.dp),
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Button(
-                onClick = {
-                    val newValue = (value + step).coerceIn(range)
-                    onValueChange(newValue)
-                },
-                enabled = value < range.last
-            ) {
-                Text("+")
-            }
+            Text("+", style = MaterialTheme.typography.titleLarge)
         }
     }
 }
@@ -279,22 +293,31 @@ fun ModelSelection(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Column {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
         Text(
-            text = "Whisper Model",
-            style = MaterialTheme.typography.bodyMedium
+            text = "Whisper Model:",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f)
         )
 
         ExposedDropdownMenuBox(
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.height(48.dp)
         ) {
             OutlinedTextField(
                 value = selectedModel.displayName,
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier
+                    .menuAnchor()
+                    .width(120.dp),
+                singleLine = true,
+                textStyle = MaterialTheme.typography.bodySmall
             )
 
             ExposedDropdownMenu(
