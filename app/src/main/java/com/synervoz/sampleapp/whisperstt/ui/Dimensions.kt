@@ -7,19 +7,18 @@ object Dimensions {
     val controlRowHeight = 48.dp
 
     // Padding
-    val cardPadding = 8.dp
+    val cardPadding = 16.dp
     val screenPadding = 16.dp
     val smallPadding = 8.dp
     val endPadding = 8.dp
 
     // Spacing
-    val verticalSpacing = 8.dp
+    val verticalSpacingSmall = 8.dp
+    val verticalSpacing = 16.dp
     val horizontalSpacing = 8.dp
-    val smallSpacing = 4.dp
 
     // Component sizes
-    val dropdownWidth = 120.dp
     val iconSize = 20.dp
-    val valueDisplayWidth = 40.dp
+    val valueDisplayWidth = 60.dp
     val durationDisplayWidth = 60.dp
 }

@@ -15,6 +15,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -57,7 +58,7 @@ fun WhisperSTTScreen(
         Text(
             text = "Whisper STT Example",
             style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Medium
         )
 
         VadStateCard(
@@ -95,7 +96,8 @@ fun WhisperSTTScreen(
                     viewModel.start()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small
         ) {
             Text(if (isRunning) "Stop" else "Start")
         }
@@ -111,24 +113,25 @@ fun VadStateCard(
     onMinSilenceDurationChange: (Int) -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small
+
     ) {
         Column(
-            modifier = Modifier.padding(Dimensions.cardPadding),
+            modifier = Modifier.padding(horizontal = Dimensions.cardPadding),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth().height(Dimensions.controlRowHeight)
             ) {
                 Text(
-                    text = "VAD State:",
+                    text = "VAD State",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = vadState,
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(end = Dimensions.endPadding)
                 )
             }
@@ -158,10 +161,11 @@ fun WhisperSection(
     onModelChange: (WhisperModel) -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
-            modifier = Modifier.padding(Dimensions.cardPadding),
+            modifier = Modifier.padding(horizontal = Dimensions.cardPadding),
         ) {
             ModelSelection(
                 selectedModel = selectedModel,
@@ -174,14 +178,13 @@ fun WhisperSection(
                     .padding(vertical = Dimensions.smallPadding),
             ) {
                 Text(
-                    text = "Whisper Backend:",
+                    text = "Whisper Backend",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f)
                 )
                 Text(
                     text = "CPU",
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(end = Dimensions.endPadding)
                 )
             }
@@ -202,7 +205,7 @@ fun ThresholdControl(
         modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
         Text(
-            text = "$label:",
+            text = label,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
@@ -221,6 +224,7 @@ fun ThresholdControl(
             text = String.format("%.1f", value),
             modifier = Modifier.width(Dimensions.valueDisplayWidth),
             style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
         )
 
         IconButton(
@@ -248,7 +252,7 @@ fun DurationControl(
         modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
         Text(
-            text = "$label:",
+            text = label,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
@@ -264,9 +268,10 @@ fun DurationControl(
         }
 
         Text(
-            text = "${value}ms",
+            text = "${value} ms",
             modifier = Modifier.width(Dimensions.durationDisplayWidth),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center
         )
 
         IconButton(
@@ -293,7 +298,7 @@ fun ModelSelection(
         modifier = Modifier.fillMaxWidth().height(48.dp)
     ) {
         Text(
-            text = "Whisper Model:",
+            text = "Whisper Model",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
@@ -301,18 +306,16 @@ fun ModelSelection(
         Box {
             Row(
                 modifier = Modifier
-                    .width(Dimensions.dropdownWidth)
-                    .clickable { expanded = true }
-                    .padding(Dimensions.smallPadding),
-                horizontalArrangement = Arrangement.Center,
+                    .clickable { expanded = true },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = selectedModel.displayName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.bodyMedium
                 )
-                Spacer(modifier = Modifier.width(Dimensions.smallSpacing))
+
+                Spacer(modifier = Modifier.width(Dimensions.smallPadding))
+
                 Icon(
                     imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null,
@@ -352,7 +355,8 @@ fun TranscriptionSection(
     }
 
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
             modifier = Modifier.padding(Dimensions.cardPadding)
@@ -382,18 +386,19 @@ fun TranscriptionItem(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small
     ) {
         Column(
-            modifier = Modifier.padding(Dimensions.cardPadding),
+            modifier = Modifier.padding(Dimensions.smallPadding),
         ) {
             Text(
                 text = transcription.text,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyMedium
             )
 
             Text(
-                text = "Processing time: ${transcription.processingTimeMs}ms",
+                text = "Transcription time: ${transcription.processingTimeMs}ms",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

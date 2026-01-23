@@ -9,7 +9,8 @@ private val AppColorScheme = darkColorScheme(
     primary = GreenNormal40,
     secondary = GreenGrey40,
     tertiary = GreenDark40,
-    onPrimary = Color.White
+    onPrimary = Color.White,
+    background = Color(0xFF1C1C1E)
 )
 
 @Composable
