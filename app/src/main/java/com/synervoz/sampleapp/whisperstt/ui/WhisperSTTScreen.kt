@@ -57,9 +57,8 @@ fun WhisperSTTScreen(
             fontWeight = FontWeight.Bold
         )
 
-        VadStateCard(vadState = vadState)
-
-        ControlsSection(
+        VadStateCard(
+            vadState = vadState,
             vadThreshold = vadThreshold,
             onVadThresholdChange = {
                 vadThreshold = it
@@ -69,7 +68,10 @@ fun WhisperSTTScreen(
             onMinSilenceDurationChange = {
                 minSilenceDuration = it
                 viewModel.updateMinSilenceDuration(it)
-            },
+            }
+        )
+
+        ControlsSection(
             selectedModel = selectedModel,
             onModelChange = {
                 selectedModel = it
@@ -89,26 +91,52 @@ fun WhisperSTTScreen(
 }
 
 @Composable
-fun VadStateCard(vadState: String) {
+fun VadStateCard(
+    vadState: String,
+    vadThreshold: Float,
+    onVadThresholdChange: (Float) -> Unit,
+    minSilenceDuration: Int,
+    onMinSilenceDurationChange: (Int) -> Unit
+) {
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(12.dp),
+//            verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            Text(
-                text = "VAD State",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = 12.dp),
+            ) {
+                Text(
+                    text = "VAD State:",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = vadState,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(end = 12.dp)
+                )
+            }
+
+            ThresholdControl(
+                label = "VAD Threshold",
+                value = vadThreshold,
+                onValueChange = onVadThresholdChange,
+                range = 0.1f..1.0f,
+                step = 0.1f
             )
-            Text(
-                text = vadState,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold
+
+            DurationControl(
+                label = "Min Silence Duration",
+                value = minSilenceDuration,
+                onValueChange = onMinSilenceDurationChange,
+                range = 50..500,
+                step = 50
             )
         }
     }
@@ -116,10 +144,6 @@ fun VadStateCard(vadState: String) {
 
 @Composable
 fun ControlsSection(
-    vadThreshold: Float,
-    onVadThresholdChange: (Float) -> Unit,
-    minSilenceDuration: Int,
-    onMinSilenceDurationChange: (Int) -> Unit,
     selectedModel: WhisperModel,
     onModelChange: (WhisperModel) -> Unit,
     isRunning: Boolean,
@@ -132,24 +156,8 @@ fun ControlsSection(
     ) {
         Column(
             modifier = Modifier.padding(12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+//            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            ThresholdControl(
-                label = "VAD Threshold",
-                value = vadThreshold,
-                onValueChange = onVadThresholdChange,
-                range = 0.1f..1.0f,
-                step = 0.1f
-            )
-
-            DurationControl(
-                label = "Min Silence Duration (ms)",
-                value = minSilenceDuration,
-                onValueChange = onMinSilenceDurationChange,
-                range = 50..500,
-                step = 50
-            )
-
             ModelSelection(
                 selectedModel = selectedModel,
                 onModelChange = onModelChange
@@ -431,7 +439,13 @@ fun WhisperSTTScreenPreview() {
 @Composable
 fun VadStateCardPreview() {
     MaterialTheme {
-        VadStateCard(vadState = "Speaking")
+        VadStateCard(
+            vadState = "Speaking",
+            vadThreshold = 0.6f,
+            onVadThresholdChange = {},
+            minSilenceDuration = 100,
+            onMinSilenceDurationChange = {}
+        )
     }
 }
 
@@ -453,10 +467,6 @@ fun TranscriptionItemPreview() {
 fun ControlsSectionPreview() {
     MaterialTheme {
         ControlsSection(
-            vadThreshold = 0.6f,
-            onVadThresholdChange = {},
-            minSilenceDuration = 100,
-            onMinSilenceDurationChange = {},
             selectedModel = WhisperModel.TINY,
             onModelChange = {},
             isRunning = false,
