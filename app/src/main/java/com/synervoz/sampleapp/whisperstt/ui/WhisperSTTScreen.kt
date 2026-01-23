@@ -10,7 +10,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.synervoz.sampleapp.whisperstt.data.TranscriptionItem
 import com.synervoz.sampleapp.whisperstt.data.WhisperModel
@@ -376,5 +378,68 @@ fun TranscriptionItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun WhisperSTTScreenPreview() {
+    MaterialTheme {
+        WhisperSTTScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun VadStateCardPreview() {
+    MaterialTheme {
+        VadStateCard(vadState = "Speaking")
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TranscriptionItemPreview() {
+    MaterialTheme {
+        TranscriptionItem(
+            transcription = TranscriptionItem(
+                text = "This is a sample transcription text that shows what the user said.",
+                processingTimeMs = 145
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ControlsSectionPreview() {
+    MaterialTheme {
+        ControlsSection(
+            vadThreshold = 0.6f,
+            onVadThresholdChange = {},
+            minSilenceDuration = 100,
+            onMinSilenceDurationChange = {},
+            selectedModel = WhisperModel.TINY,
+            onModelChange = {},
+            isRunning = false,
+            isInitialized = true,
+            onStart = {},
+            onStop = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TranscriptionSectionPreview() {
+    MaterialTheme {
+        TranscriptionSection(
+            transcriptions = listOf(
+                TranscriptionItem("First transcription", 120),
+                TranscriptionItem("Second transcription with a longer text that might wrap to multiple lines", 200),
+                TranscriptionItem("Third transcription", 95)
+            ),
+            modifier = Modifier.height(400.dp)
+        )
     }
 }
