@@ -9,7 +9,6 @@ import com.synervoz.switchboard.sdk.Switchboard
 import com.synervoz.switchboardonnx.OnnxExtension
 import com.synervoz.switchboardsilerovad.SileroVADExtension
 import com.synervoz.switchboardwhisper.WhisperExtension
-import org.json.JSONObject
 import java.io.File
 
 class SwitchboardManager(
@@ -79,32 +78,30 @@ class SwitchboardManager(
                 return false
             }
 
-            val transcriptionListenerId = Switchboard.addEventListener(
+            val transcriptionListenerResult = Switchboard.addEventListener(
                 objectId = "sttNode",
                 eventName = "transcribed"
             ) { _, eventData ->
                 handleTranscription(eventData)
             }
 
-            val speechStartedListenerId = Switchboard.addEventListener(
+            val speechStartedListenerResult = Switchboard.addEventListener(
                 objectId = "vadNode",
                 eventName = "speechStarted"
             ) { _, _ ->
                 onVadStateChange("Speaking")
             }
 
-            val speechEndedListenerId = Switchboard.addEventListener(
+            val speechEndedListenerResult = Switchboard.addEventListener(
                 objectId = "vadNode",
                 eventName = "speechEnded"
             ) { _, _ ->
                 onVadStateChange("Silence")
             }
 
-            eventListeners.addAll(listOf(
-                transcriptionListenerId,
-                speechStartedListenerId,
-                speechEndedListenerId
-            ))
+            transcriptionListenerResult.value?.let { eventListeners.add(it) }
+            speechStartedListenerResult.value?.let { eventListeners.add(it) }
+            speechEndedListenerResult.value?.let { eventListeners.add(it) }
 
             val startResult = Switchboard.callAction(engineId, "start")
             if (startResult.isError) {
@@ -191,10 +188,10 @@ class SwitchboardManager(
         }
     }
 
-    private fun handleTranscription(eventDataJson: String) {
-        val jsonObject = JSONObject(eventDataJson)
-        val text = jsonObject.optString("text", "")
-        val processingTime = jsonObject.optLong("processingTime", -1)
+    private fun handleTranscription(eventData: Any?) {
+        val data = eventData as? Map<String, Any> ?: return
+        val text = data["text"] as? String ?: ""
+        val processingTime = (data["processingTime"] as? Number)?.toLong() ?: -1L
 
         if (text.isNotEmpty()) {
             val transcriptionItem = TranscriptionItem(text, processingTime)
