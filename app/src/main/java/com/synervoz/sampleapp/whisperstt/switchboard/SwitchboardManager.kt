@@ -28,7 +28,6 @@ class SwitchboardManager(
 
     fun initialize(appId: String, appSecret: String): Boolean {
         return try {
-            AssetUtils.copyAssetFileToInternal(context, "STTPlayerExample.json", "STTPlayerExample.json")
             AssetUtils.copyAssetFileToInternal(context, "conversation-clean-mono.wav", "conversation-clean-mono.wav")
             AssetUtils.copyAssetFileToInternal(context, "ggml-tiny.en.bin", "ggml-tiny.en.bin")
             AssetUtils.copyAssetFileToInternal(context, "ggml-base.en.bin", "ggml-base.en.bin")
@@ -56,7 +55,7 @@ class SwitchboardManager(
                 return false
             }
 
-            val configJson = File(context.filesDir, "STTPlayerExample.json").readText(Charsets.UTF_8)
+            val configJson = context.assets.open("STTPlayerExample.json").readBytes().decodeToString()
             val result = Switchboard.createEngine(configJson)
             if (result.isError) {
                 onError("Failed to create engine")

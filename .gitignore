@@ -35,3 +35,5 @@ app/src/main/assets/model/ggml-base.en.bin
 app/src/main/assets/model/ggml-tiny.en.bin
 app/src/main/assets/models/ggml-tiny.en.bin
 app/src/main/assets/models/ggml-base.en.bin
+app/src/main/assets/ggml-tiny.en.bin
+app/src/main/assets/ggml-base.en.bin
