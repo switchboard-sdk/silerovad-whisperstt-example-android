@@ -20,17 +20,34 @@ dependencies {
     implementation 'com.synervoz:switchboard.extensions.whisper:3.2.0'
     implementation 'com.synervoz:switchboard.extensions.onnx:3.2.0'
     implementation 'com.synervoz:switchboard.extensions.silerovad:3.2.0'
-    }
+}
 ```
-
-
 
 ## Download Whisper Models
 
-Download Whisper models from the following links and place them in `assets` folder of your Andorid application i.e `app/src/main/assets`.
+Download Whisper models from the following links and place them in `assets` folder of your Android application i.e `app/src/main/assets`.
 
 - [ggml-tiny.en.bin](https://switchboard-sdk-public.s3.amazonaws.com/assets/models/whisper/ggml-tiny.en.bin)
 - [ggml-base.en.bin](https://switchboard-sdk-public.s3.amazonaws.com/assets/models/whisper/ggml-base.en.bin)
+
+## Permissions
+
+Add the following permissions to your `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.INTERNET" />
+```
+
+Request runtime permission to process audio input:
+
+```kotlin
+if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+    != PackageManager.PERMISSION_GRANTED) {
+    ActivityCompat.requestPermissions(this,
+        arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_PERMISSION_CODE)
+}
+```
 
 ## Load Extensions
 
@@ -62,7 +79,7 @@ Switchboard.initialize(
 
 ## Copy Whisper STT Model Files
 
-Switchboard Whisper extension needs a path of the STT model to load it. Since Android does not expose paths of assets, we will need to copy them to application's internaly directory first
+Switchboard Whisper extension needs a path of the STT model to load it. Since Android does not expose paths of assets, we will need to copy them to application's internal directory first
 
 ```
 fun copyAssetFileToInternal(context: Context, assetPath: String, targetFileName: String): File {
@@ -128,10 +145,19 @@ Switchboard.callAction(
 
 ## Start the Audio Engine
 
-Now that everything is setup, we can start the audio prcessing and transcription by calling `start` action with the `engineId` we received from `createEngine` calls result.
+Now that everything is setup, we can start the audio processing and transcription by calling `start` action with the `engineId` we received from `createEngine` call's result.
 
 ```
 Switchboard.callAction(engineId, "start")
 ```
 
-Now you should see transcriptions of any speech voices into devices microphone,.
+Now you should see transcriptions of any speech detected by the device's microphone.
+
+## Stop and Clean Up
+
+When done, stop the engine and remove listeners:
+
+```kotlin
+Switchboard.callAction(engineId, "stop")
+Switchboard.removeEventListener("sttNode", transcriptionListenerId)
+```
