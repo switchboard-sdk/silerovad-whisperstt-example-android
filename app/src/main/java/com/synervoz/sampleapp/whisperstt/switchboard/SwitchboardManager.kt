@@ -30,8 +30,8 @@ class SwitchboardManager(
         return try {
             AssetUtils.copyAssetFileToInternal(context, "STTPlayerExample.json", "STTPlayerExample.json")
             AssetUtils.copyAssetFileToInternal(context, "conversation-clean-mono.wav", "conversation-clean-mono.wav")
-            AssetUtils.copyAssetFileToInternal(context, "model/ggml-tiny.en.bin", "ggml-tiny.en.bin")
-            AssetUtils.copyAssetFileToInternal(context, "model/ggml-base.en.bin", "ggml-base.en.bin")
+            AssetUtils.copyAssetFileToInternal(context, "models/ggml-tiny.en.bin", "ggml-tiny.en.bin")
+            AssetUtils.copyAssetFileToInternal(context, "models/ggml-base.en.bin", "ggml-base.en.bin")
 
             Switchboard.loadExtensionLibrary("SwitchboardWhisper")
             Switchboard.loadExtensionLibrary("SwitchboardOnnx")
