@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ASSETS_DIR="app/src/main/assets/models"
+ASSETS_DIR="app/src/main/assets"
 
 mkdir -p "$ASSETS_DIR"
 
@@ -10,4 +10,4 @@ curl -L -o "$ASSETS_DIR/ggml-base.en.bin" https://switchboard-sdk-public.s3.amaz
 echo "Downloading ggml-tiny.en.bin..."
 curl -L -o "$ASSETS_DIR/ggml-tiny.en.bin" https://switchboard-sdk-public.s3.amazonaws.com/assets/models/whisper/ggml-tiny.en.bin
 
-echo "Models downloaded successfully!"
+echo "Whisper Models downloaded"

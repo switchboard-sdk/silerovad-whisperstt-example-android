@@ -1,6 +1,6 @@
 @echo off
 
-set ASSETS_DIR=app\src\main\assets\models
+set ASSETS_DIR=app\src\main\assets
 
 if not exist "%ASSETS_DIR%" mkdir "%ASSETS_DIR%"
 
@@ -10,5 +10,5 @@ curl -L -o "%ASSETS_DIR%\ggml-base.en.bin" https://switchboard-sdk-public.s3.ama
 echo Downloading ggml-tiny.en.bin...
 curl -L -o "%ASSETS_DIR%\ggml-tiny.en.bin" https://switchboard-sdk-public.s3.amazonaws.com/assets/models/whisper/ggml-tiny.en.bin
 
-echo Models downloaded successfully!
+echo Whisper Models downloaded.
 pause
