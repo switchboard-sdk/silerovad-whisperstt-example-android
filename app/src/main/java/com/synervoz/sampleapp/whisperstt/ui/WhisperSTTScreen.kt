@@ -153,7 +153,7 @@ fun VadStateCard(
                 label = "Min Silence Duration",
                 value = minSilenceDuration,
                 onValueChange = onMinSilenceDurationChange,
-                range = 50..500,
+                range = 50..1000,
                 step = 50
             )
         }
