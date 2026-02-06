@@ -13,6 +13,10 @@
           "type": "AudioPlayer"
         },
         {
+          "id": "muteNode",
+          "type": "Mute"
+        },
+        {
           "id": "mixerNode",
           "type": "Mixer"
         },
@@ -44,6 +48,10 @@
       "connections": [
         {
           "sourceNode": "inputNode",
+          "destinationNode": "muteNode"
+        },
+        {
+          "sourceNode": "muteNode",
           "destinationNode": "mixerNode"
         },
         {

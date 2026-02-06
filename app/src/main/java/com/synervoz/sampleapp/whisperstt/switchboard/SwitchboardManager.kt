@@ -6,6 +6,7 @@ import com.synervoz.sampleapp.whisperstt.data.TranscriptionItem
 import com.synervoz.sampleapp.whisperstt.data.WhisperModel
 import com.synervoz.sampleapp.whisperstt.utils.AssetUtils
 import com.synervoz.switchboard.sdk.Switchboard
+import com.synervoz.switchboard.sdk.SwitchboardResult
 import com.synervoz.switchboardonnx.OnnxExtension
 import com.synervoz.switchboardsilerovad.SileroVADExtension
 import com.synervoz.switchboardwhisper.WhisperExtension
@@ -25,6 +26,7 @@ class SwitchboardManager(
     private var engineId: String? = null
     private val eventListeners = mutableListOf<Int>()
     private var currentWhisperModel = WhisperModel.TINY
+    private val useAudioPlayer = true
 
     fun initialize(appId: String, appSecret: String): Boolean {
         return try {
@@ -71,45 +73,48 @@ class SwitchboardManager(
     }
 
     fun start(): Boolean {
-        return try {
-            val engineId = this.engineId ?: run {
-                onError("Engine not initialized")
-                return false
-            }
+        val engineId = this.engineId ?: run {
+            onError("Engine not initialized")
+            return false
+        }
 
-            val transcriptionListenerResult = Switchboard.addEventListener(
-                objectId = "sttNode",
-                eventName = "transcribed"
-            ) { _, eventData ->
-                handleTranscription(eventData)
-            }
+        val transcriptionListenerResult = Switchboard.addEventListener(
+            objectId = "sttNode",
+            eventName = "transcribed"
+        ) { _, eventData ->
+            handleTranscription(eventData)
+        }
 
-            val speechStartedListenerResult = Switchboard.addEventListener(
-                objectId = "vadNode",
-                eventName = "speechStarted"
-            ) { _, _ ->
-                onVadStateChange("Speaking")
-            }
+        val speechStartedListenerResult = Switchboard.addEventListener(
+            objectId = "vadNode",
+            eventName = "speechStarted"
+        ) { _, _ ->
+            onVadStateChange("Speaking")
+        }
 
-            val speechEndedListenerResult = Switchboard.addEventListener(
-                objectId = "vadNode",
-                eventName = "speechEnded"
-            ) { _, _ ->
-                onVadStateChange("Silence")
-            }
+        val speechEndedListenerResult = Switchboard.addEventListener(
+            objectId = "vadNode",
+            eventName = "speechEnded"
+        ) { _, _ ->
+            onVadStateChange("Silence")
+        }
 
-            transcriptionListenerResult.value?.let { eventListeners.add(it) }
-            speechStartedListenerResult.value?.let { eventListeners.add(it) }
-            speechEndedListenerResult.value?.let { eventListeners.add(it) }
+        transcriptionListenerResult.value?.let { eventListeners.add(it) }
+        speechStartedListenerResult.value?.let { eventListeners.add(it) }
+        speechEndedListenerResult.value?.let { eventListeners.add(it) }
 
-            val startResult = Switchboard.callAction(engineId, "start")
-            if (startResult.isError) {
-                onError("Failed to start engine")
-                return false
-            }
+        val startResult = Switchboard.callAction(engineId, "start")
+        if (startResult.isError) {
+            onError("Failed to start engine")
+            return false
+        }
 
-            loadCurrentWhisperModel()
+        if (loadCurrentWhisperModel().isError) {
+            onError("Failed to load Whisper model")
+            return false
+        }
 
+        if (useAudioPlayer) {
             val audioFilePath = File(context.filesDir, "conversation-clean-mono.wav").absolutePath
             val loadResult = Switchboard.callAction(
                 objectId = "audioPlayerNode",
@@ -118,12 +123,11 @@ class SwitchboardManager(
             )
 
             val playResult = Switchboard.callAction("audioPlayerNode", "play")
-
-            true
-        } catch (e: Exception) {
-            onError("Start failed: ${e.message}")
-            false
+            Switchboard.setValue("muteNode", "isMuted", true)
+            return loadResult.isSuccess && playResult.isSuccess
         }
+
+        return true
     }
 
     fun stop(): Boolean {
@@ -198,14 +202,14 @@ class SwitchboardManager(
         }
     }
 
-    private fun loadCurrentWhisperModel() {
+    private fun loadCurrentWhisperModel(): SwitchboardResult<String> {
         val modelFileName = when (currentWhisperModel) {
             WhisperModel.BASE -> "ggml-base.en.bin"
             else -> "ggml-tiny.en.bin"
         }
         val modelPath = "${context.filesDir}/$modelFileName"
 
-        Switchboard.callAction(
+        return Switchboard.callAction(
             objectId = "sttNode",
             actionName = "loadModel",
             params = mapOf(
