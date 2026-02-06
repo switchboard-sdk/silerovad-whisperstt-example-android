@@ -197,6 +197,7 @@ class SwitchboardManager(
         val processingTime = (data["processingTime"] as? Number)?.toLong() ?: -1L
 
         if (text.isNotEmpty()) {
+            Log.d("SwitchboardManager", "$text : $processingTime")
             val transcriptionItem = TranscriptionItem(text, processingTime)
             onTranscription(transcriptionItem)
         }
