@@ -117,13 +117,8 @@ val transcriptionListenerResult = Switchboard.addEventListener(
             eventName = "transcribed"
         ) { _, eventData ->
             val data = eventData as? Map<String, Any> ?: return
-            val text = data["text"] as? String ?: ""
-            val processingTime = (data["processingTime"] as? Number)?.toLong() ?: -1L
-
-            if (text.isNotEmpty()) {
-                val transcriptionItem = TranscriptionItem(text, processingTime)
-                onTranscription(transcriptionItem)
-            }
+            val transcription = data["text"] as? String ?: ""
+            Log.d("TRANSCRIPTION", "$transcription")
         }
 ```
 
