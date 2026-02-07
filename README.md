@@ -7,7 +7,12 @@ This project showcases how to use Switchboard SDK and its Whisper STT extension 
 ## Prerequisites
 
 ### Android Studio
+
 Android Studio version 2025.2.2 was used to create the project but it is not a requirement to use the same version.
+
+### Android Device
+
+64-bit Android Device with minimum OS 7.0 (API 24)
 
 ## Download Whisper Models
 
@@ -43,3 +48,18 @@ script\setup.bat
 - Speak into the microphone of your device
 - Transcriptions will appear in real-time
 - Adjust voice activity detector parameters as needed (threshold and silence duration)
+
+# Running Tests
+
+- Open the project in Android Studio
+- Selected `Release` build variant
+- Gradle Sync
+- Run `WhisperSTTBenchmarkTest` configuration
+
+## View Test Results
+
+Test results will be logged in the last test `zz_printRawResults` with tag `BENCHMARK_RESULTS`
+
+```bash
+adb logcat -s BENCHMARK_RESULTS
+```
