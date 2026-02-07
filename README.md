@@ -41,7 +41,7 @@ script\setup.bat
 - Select your target device/simulator
 - Run
 
-# How to use
+# How to use application
 
 - Select the Whisper model you want to use (Tiny for speed, Base for accuracy)
 - Press Start
