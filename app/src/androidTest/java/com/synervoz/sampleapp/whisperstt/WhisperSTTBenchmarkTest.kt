@@ -1,5 +1,6 @@
 package com.synervoz.sampleapp.whisperstt
 
+import android.util.Log
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -18,14 +19,23 @@ import java.util.concurrent.TimeUnit
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class WhisperSTTBenchmarkTest {
 
+    private val MIN_PROCESSING_TIME_MS = 1L
+    private val MAX_PROCESSING_TIME_MS = 30000L
+
     @get:Rule
     val permissionRule: GrantPermissionRule =
         GrantPermissionRule.grant(android.Manifest.permission.RECORD_AUDIO)
 
     private val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val MIN_PROCESSING_TIME_MS = 1L
-    private val MAX_PROCESSING_TIME_MS = 30000L
+    init {
+        val intent = android.content.Intent(appContext, TestActivity::class.java).apply {
+            addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        appContext.startActivity(intent)
+        Thread.sleep(500)
+
+    }
 
     companion object {
         fun addResult(result: BenchmarkResult) {
@@ -35,7 +45,7 @@ class WhisperSTTBenchmarkTest {
                 Model: ${result.model}
                 VAD Threshold: ${result.vadThreshold}
                 Min Silence Duration: ${result.minSilenceDurationMs} ms
-                Processing Time: ${result.processingTimeMs }ms
+                Processing Time: ${result.processingTimeMs} ms
                 Transcription: ${result.transcription}
                 Success: ${result.success}
             """.trimIndent()
@@ -58,6 +68,14 @@ class WhisperSTTBenchmarkTest {
         val processingTimeMs: Long,
         val transcriptionCount: Int
     )
+
+    private fun cleanTranscription(text: String): String {
+        return text
+            .replace(Regex("[,.*\\[\\]{}()!?;:\"'`~@#$%^&+=|\\\\/<>-]"), "")
+            .replace(Regex("\\s+"), " ")
+            .trim()
+            .lowercase()
+    }
 
     private fun runWhisperTest(
         whisperModel: WhisperModel,
@@ -137,7 +155,7 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun tinyModel_minSilence_1000ms() {
+    fun test_1_tinyModel_minSilence_1000ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.TINY,
             vadThreshold = 0.6f,
@@ -156,7 +174,7 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun tinyModel_minSilence_500ms() {
+    fun test_2_tinyModel_minSilence_500ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.TINY,
             vadThreshold = 0.6f,
@@ -175,7 +193,7 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun tinyModel_minSilence_100ms() {
+    fun test_3_tinyModel_minSilence_100ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.TINY,
             vadThreshold = 0.6f,
@@ -194,7 +212,7 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun baseModel_minSilence_1000ms() {
+    fun test_4_baseModel_minSilence_1000ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.BASE,
             vadThreshold = 0.6f,
@@ -213,7 +231,7 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun baseModel_minSilence_500ms() {
+    fun test_5_baseModel_minSilence_500ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.BASE,
             vadThreshold = 0.6f,
@@ -232,7 +250,7 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun baseModel_minSilence_100ms() {
+    fun test_6_baseModel_minSilence_100ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.BASE,
             vadThreshold = 0.6f,
@@ -256,11 +274,11 @@ class WhisperSTTBenchmarkTest {
         val content = BenchmarkFileManager.readFullContent(context)
 
         if (content.isEmpty()) {
-            println("No benchmark results found in file")
+            Log.d("BENCHMARK_RESULTS","No benchmark results found in file")
         } else {
-            println(content)
+            Log.d("BENCHMARK_RESULTS",content)
         }
 
-        println("=== END OF RESULTS ===")
+        Log.d("BENCHMARK_RESULTS","=== END OF RESULTS ===")
     }
 }
