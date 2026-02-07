@@ -59,7 +59,3 @@ script\setup.bat
 ## View Test Results
 
 Test results will be logged in the last test `zz_printRawResults` with tag `BENCHMARK_RESULTS`
-
-```bash
-adb logcat -s BENCHMARK_RESULTS
-```
