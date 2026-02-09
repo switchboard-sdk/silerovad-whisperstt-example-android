@@ -8,7 +8,8 @@ This project showcases how to use Switchboard SDK and its Whisper STT extension 
 
 ### Android Studio
 
-Android Studio version 2025.2.2 was used to create the project but it is not a requirement to use the same version.
+- Android Studio version 2025.2.2 was used to create the project but it is not a requirement to use the same version.
+- JDK 17.0.9 was used for development
 
 ### Android Device
 
