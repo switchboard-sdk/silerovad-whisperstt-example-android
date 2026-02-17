@@ -43,6 +43,7 @@ class SwitchboardManager(
             SileroVADExtension.load()
 
             val initResult = Switchboard.initialize(
+                context = context,
                 appId = appId,
                 appSecret = appSecret,
                 extensions = mapOf(
