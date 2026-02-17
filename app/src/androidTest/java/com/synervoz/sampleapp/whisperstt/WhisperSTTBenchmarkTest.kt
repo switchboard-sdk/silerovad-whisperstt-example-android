@@ -155,11 +155,11 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun test_1_tinyModel_minSilence_1000ms() {
+    fun test_1_tinyModel_minSilence_100ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.TINY,
             vadThreshold = 0.6f,
-            minSilenceDurationMs = 1000
+            minSilenceDurationMs = 100
         )
 
         assertTrue("Failed to initialize Switchboard", result.initialized)
@@ -193,11 +193,11 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun test_3_tinyModel_minSilence_100ms() {
+    fun test_3_tinyModel_minSilence_1000ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.TINY,
             vadThreshold = 0.6f,
-            minSilenceDurationMs = 100
+            minSilenceDurationMs = 1000
         )
 
         assertTrue("Failed to initialize Switchboard", result.initialized)
@@ -212,14 +212,14 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun test_4_baseModel_minSilence_1000ms() {
+    fun test_4_baseModel_minSilence_100ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.BASE,
             vadThreshold = 0.6f,
-            minSilenceDurationMs = 1000
+            minSilenceDurationMs = 100
         )
 
-        assertTrue("Fa iled to initialize Switchboard", result.initialized)
+        assertTrue("Failed to initialize Switchboard", result.initialized)
 
         assertTrue(
             "Processing time should be between ${MIN_PROCESSING_TIME_MS}-${MAX_PROCESSING_TIME_MS}ms, but was ${result.processingTimeMs}",
@@ -250,14 +250,14 @@ class WhisperSTTBenchmarkTest {
     }
 
     @Test
-    fun test_6_baseModel_minSilence_100ms() {
+    fun test_6_baseModel_minSilence_1000ms() {
         val result = runWhisperTest(
             whisperModel = WhisperModel.BASE,
             vadThreshold = 0.6f,
-            minSilenceDurationMs = 100
+            minSilenceDurationMs = 1000
         )
 
-        assertTrue("Failed to initialize Switchboard", result.initialized)
+        assertTrue("Fa iled to initialize Switchboard", result.initialized)
 
         assertTrue(
             "Processing time should be between ${MIN_PROCESSING_TIME_MS}-${MAX_PROCESSING_TIME_MS}ms, but was ${result.processingTimeMs}",
