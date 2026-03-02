@@ -9,18 +9,6 @@
       },
       "nodes": [
         {
-          "id": "audioPlayerNode",
-          "type": "AudioPlayer"
-        },
-        {
-          "id": "muteNode",
-          "type": "Mute"
-        },
-        {
-          "id": "mixerNode",
-          "type": "Mixer"
-        },
-        {
           "id": "multiChannelToMonoNode",
           "type": "MultiChannelToMono"
         },
@@ -48,18 +36,6 @@
       "connections": [
         {
           "sourceNode": "inputNode",
-          "destinationNode": "muteNode"
-        },
-        {
-          "sourceNode": "muteNode",
-          "destinationNode": "mixerNode"
-        },
-        {
-          "sourceNode": "audioPlayerNode",
-          "destinationNode": "mixerNode"
-        },
-        {
-          "sourceNode": "mixerNode",
           "destinationNode": "multiChannelToMonoNode"
         },
         {

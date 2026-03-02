@@ -26,11 +26,9 @@ class SwitchboardManager(
     private var engineId: String? = null
     private val eventListeners = mutableListOf<Int>()
     private var currentWhisperModel = WhisperModel.TINY
-    private val useAudioPlayer = true
 
     fun initialize(appId: String, appSecret: String): Boolean {
         return try {
-            AssetUtils.copyAssetFileToInternal(context, "conversation-clean-mono.wav", "conversation-clean-mono.wav")
             AssetUtils.copyAssetFileToInternal(context, "ggml-tiny.en.bin", "ggml-tiny.en.bin")
             AssetUtils.copyAssetFileToInternal(context, "ggml-base.en.bin", "ggml-base.en.bin")
 
@@ -58,7 +56,7 @@ class SwitchboardManager(
                 return false
             }
 
-            val configJson = context.assets.open("STTPlayerExample.json").readBytes().decodeToString()
+            val configJson = context.assets.open("STTAudioGraph.json").readBytes().decodeToString()
             val result = Switchboard.createEngine(configJson)
             if (result.isError) {
                 onError("Failed to create engine")
@@ -113,19 +111,6 @@ class SwitchboardManager(
         if (loadCurrentWhisperModel().isError) {
             onError("Failed to load Whisper model")
             return false
-        }
-
-        if (useAudioPlayer) {
-            val audioFilePath = File(context.filesDir, "conversation-clean-mono.wav").absolutePath
-            val loadResult = Switchboard.callAction(
-                objectId = "audioPlayerNode",
-                actionName = "load",
-                params = mapOf("audioFilePath" to audioFilePath)
-            )
-
-            val playResult = Switchboard.callAction("audioPlayerNode", "play")
-            Switchboard.setValue("muteNode", "isMuted", true)
-            return loadResult.isSuccess && playResult.isSuccess
         }
 
         return true
