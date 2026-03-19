@@ -24,7 +24,8 @@ class SwitchboardManager(
     }
 
     private var engineId: String? = null
-    private val eventListeners = mutableListOf<Int>()
+    private val vadEventListeners = mutableListOf<Int>()
+    private val sttEventListeners = mutableListOf<Int>()
     private var currentWhisperModel = WhisperModel.TINY
 
     fun initialize(appId: String, appSecret: String): Boolean {
@@ -98,9 +99,9 @@ class SwitchboardManager(
             onVadStateChange("Silence")
         }
 
-        transcriptionListenerResult.value?.let { eventListeners.add(it) }
-        speechStartedListenerResult.value?.let { eventListeners.add(it) }
-        speechEndedListenerResult.value?.let { eventListeners.add(it) }
+        transcriptionListenerResult.value?.let { sttEventListeners.add(it) }
+        speechStartedListenerResult.value?.let { vadEventListeners.add(it) }
+        speechEndedListenerResult.value?.let { vadEventListeners.add(it) }
 
         val startResult = Switchboard.callAction(engineId, "start")
         if (startResult.isError) {
@@ -207,17 +208,14 @@ class SwitchboardManager(
     }
 
     private fun cleanup() {
-        eventListeners.forEach { listenerId ->
-            try {
-                Switchboard.removeEventListener("vadNode", listenerId)
-            } catch (e: Exception) {
-                try {
-                    Switchboard.removeEventListener("sttNode", listenerId)
-                } catch (e2: Exception) {
-                    Log.w(TAG, "Could not remove listener $listenerId: ${e2.message}")
-                }
-            }
+        vadEventListeners.forEach { listenerId ->
+            Switchboard.removeEventListener("vadNode", listenerId)
         }
-        eventListeners.clear()
+        vadEventListeners.clear()
+
+        sttEventListeners.forEach { listenerId ->
+            Switchboard.removeEventListener("sttNode", listenerId)
+        }
+        sttEventListeners.clear()
     }
 }
