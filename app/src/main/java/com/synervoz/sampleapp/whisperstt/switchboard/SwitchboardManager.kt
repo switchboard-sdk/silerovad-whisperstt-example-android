@@ -18,58 +18,48 @@ class SwitchboardManager(
     private val onVadStateChange: (String) -> Unit = {},
     private val onError: (String) -> Unit = {}
 ) {
-
-    companion object {
-        private const val TAG = "SwitchboardManager"
-    }
-
     private var engineId: String? = null
     private val vadEventListeners = mutableListOf<Int>()
     private val sttEventListeners = mutableListOf<Int>()
     private var currentWhisperModel = WhisperModel.TINY
 
     fun initialize(appId: String, appSecret: String): Boolean {
-        return try {
-            AssetUtils.copyAssetFileToInternal(context, "ggml-tiny.en.bin", "ggml-tiny.en.bin")
-            AssetUtils.copyAssetFileToInternal(context, "ggml-base.en.bin", "ggml-base.en.bin")
+        AssetUtils.copyAssetFileToInternal(context, "ggml-tiny.en.bin", "ggml-tiny.en.bin")
+        AssetUtils.copyAssetFileToInternal(context, "ggml-base.en.bin", "ggml-base.en.bin")
 
-            Switchboard.loadExtensionLibrary("SwitchboardWhisper")
-            Switchboard.loadExtensionLibrary("SwitchboardOnnx")
-            Switchboard.loadExtensionLibrary("SwitchboardSileroVAD")
+        Switchboard.loadExtensionLibrary("SwitchboardWhisper")
+        Switchboard.loadExtensionLibrary("SwitchboardOnnx")
+        Switchboard.loadExtensionLibrary("SwitchboardSileroVAD")
 
-            WhisperExtension.load()
-            OnnxExtension.load()
-            SileroVADExtension.load()
+        WhisperExtension.load()
+        OnnxExtension.load()
+        SileroVADExtension.load()
 
-            val initResult = Switchboard.initialize(
-                context = context,
-                appId = appId,
-                appSecret = appSecret,
-                extensions = mapOf(
-                    "Whisper" to emptyMap<String, Any>(),
-                    "Onnx" to emptyMap<String, Any>(),
-                    "SileroVAD" to emptyMap<String, Any>()
-                )
+        val initResult = Switchboard.initialize(
+            context = context,
+            appId = appId,
+            appSecret = appSecret,
+            extensions = mapOf(
+                "Whisper" to emptyMap<String, Any>(),
+                "Onnx" to emptyMap<String, Any>(),
+                "SileroVAD" to emptyMap<String, Any>()
             )
+        )
 
-            if (initResult.isError) {
-                onError("Failed to initialize Switchboard SDK")
-                return false
-            }
-
-            val configJson = context.assets.open("STTAudioGraph.json").readBytes().decodeToString()
-            val result = Switchboard.createEngine(configJson)
-            if (result.isError) {
-                onError("Failed to create engine")
-                return false
-            }
-
-            engineId = result.value
-            true
-        } catch (e: Exception) {
-            onError("Initialize failed: ${e.message}")
-            false
+        if (initResult.isError) {
+            onError("Failed to initialize Switchboard SDK")
+            return false
         }
+
+        val configJson = context.assets.open("STTAudioGraph.json").readBytes().decodeToString()
+        val result = Switchboard.createEngine(configJson)
+        if (result.isError) {
+            onError("Failed to create engine")
+            return false
+        }
+
+        engineId = result.value
+        return true
     }
 
     fun start(): Boolean {
@@ -118,64 +108,37 @@ class SwitchboardManager(
     }
 
     fun stop(): Boolean {
-        return try {
-            val engineId = this.engineId ?: return true
-
-            val stopResult = Switchboard.callAction(engineId, "stop")
-            cleanup()
-
-            if (stopResult.isError) {
-                onError("Failed to stop engine")
-                return false
-            }
-            true
-        } catch (e: Exception) {
-            onError("Stop failed: ${e.message}")
-            false
-        }
+        val engineId = this.engineId ?: return true
+        Switchboard.callAction(engineId, "stop")
+        cleanup()
+        return true
     }
 
     fun updateVadThreshold(threshold: Float) {
-        try {
-            Switchboard.setValue("vadNode", "threshold", threshold)
-        } catch (e: Exception) {
-            onError("Failed to update VAD threshold: ${e.message}")
-        }
+        Switchboard.setValue("vadNode", "threshold", threshold)
     }
 
     fun updateMinSilenceDuration(duration: Int) {
-        try {
-            Switchboard.setValue("vadNode", "minSilenceDurationMs", duration)
-        } catch (e: Exception) {
-            onError("Failed to update min silence duration: ${e.message}")
-        }
+        Switchboard.setValue("vadNode", "minSilenceDurationMs", duration)
     }
 
     fun setWhisperModel(model: WhisperModel) {
-        try {
-            currentWhisperModel = model
-            engineId?.let { loadCurrentWhisperModel() }
-        } catch (e: Exception) {
-            onError("Failed to update Whisper model: ${e.message}")
-        }
+        currentWhisperModel = model
+        engineId?.let { loadCurrentWhisperModel() }
     }
 
     fun getVadThreshold(): Float {
         val result = Switchboard.getValue("vadNode", "threshold")
-        return if (result.isSuccess) {
-            (result.value as? Number)?.toFloat() ?: 0.6f
-        } else {
-            0.6f
-        }
+        return (result.value as? Number)?.toFloat() ?: 0.6f
     }
 
     fun getMinSilenceDurationMs(): Int {
         val result = Switchboard.getValue("vadNode", "minSilenceDurationMs")
-        return if (result.isSuccess) {
-            (result.value as? Number)?.toInt() ?: 100
-        } else {
-            100
-        }
+        return  (result.value as? Number)?.toInt() ?: 100
+    }
+
+    fun getWhisperModel(): WhisperModel {
+        return currentWhisperModel
     }
 
     private fun handleTranscription(eventData: Any?) {

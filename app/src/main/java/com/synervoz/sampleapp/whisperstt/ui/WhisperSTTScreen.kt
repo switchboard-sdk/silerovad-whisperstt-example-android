@@ -34,16 +34,6 @@ fun WhisperSTTScreen(
     val error by viewModel.error.observeAsState()
     val systemStats by viewModel.systemStats.observeAsState("CPU: -- | Memory: --")
 
-    var vadThreshold by remember { mutableFloatStateOf(0.6f) }
-    var minSilenceDuration by remember { mutableIntStateOf(100) }
-    var selectedModel by remember { mutableStateOf(WhisperModel.TINY) }
-
-    LaunchedEffect(Unit) {
-        if (!isInitialized) {
-            viewModel.initialize()
-        }
-    }
-
     error?.let { errorMsg ->
         LaunchedEffect(errorMsg) {
             viewModel.clearError()
@@ -64,24 +54,15 @@ fun WhisperSTTScreen(
 
         VadStateCard(
             vadState = vadState,
-            vadThreshold = vadThreshold,
-            onVadThresholdChange = {
-                vadThreshold = it
-                viewModel.updateVadThreshold(it)
-            },
-            minSilenceDuration = minSilenceDuration,
-            onMinSilenceDurationChange = {
-                minSilenceDuration = it
-                viewModel.updateMinSilenceDuration(it)
-            }
+            vadThreshold = viewModel.getVadThreshold(),
+            onVadThresholdChange = { viewModel.updateVadThreshold(it) },
+            minSilenceDuration = viewModel.getMinSilenceDurationMs(),
+            onMinSilenceDurationChange = { viewModel.updateMinSilenceDuration(it) }
         )
 
         WhisperSection(
-            selectedModel = selectedModel,
-            onModelChange = {
-                selectedModel = it
-                viewModel.setWhisperModel(it)
-            }
+            selectedModel = viewModel.getWhisperModel(),
+            onModelChange = { viewModel.setWhisperModel(it) }
         )
 
         SystemStatsCard(

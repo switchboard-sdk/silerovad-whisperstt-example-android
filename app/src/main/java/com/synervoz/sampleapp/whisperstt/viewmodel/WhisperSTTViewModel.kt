@@ -45,6 +45,7 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         handler.post(statsUpdateRunnable)
+        initialize()
     }
 
     fun initialize() {
@@ -78,6 +79,18 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
 
     fun setWhisperModel(model: WhisperModel) {
         switchboardManager.setWhisperModel(model)
+    }
+
+    fun getVadThreshold(): Float {
+        return switchboardManager.getVadThreshold()
+    }
+
+    fun getMinSilenceDurationMs(): Int {
+        return switchboardManager.getMinSilenceDurationMs()
+    }
+
+    fun getWhisperModel(): WhisperModel {
+        return switchboardManager.getWhisperModel()
     }
 
     fun clearError() {
