@@ -1,6 +1,6 @@
-# Switchboard SDK Whisper STT Example
+# Switchboard SDK Whisper STT and Silero VAD Example
 
-This project showcases how to use Switchboard SDK and its Whisper STT extension to create a speech to text application.
+This project showcases how to use Switchboard SDK and its Whisper STT and Silero VAD extensions to create a speech to text application.
 
 # Setup
 
