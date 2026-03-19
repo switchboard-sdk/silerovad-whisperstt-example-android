@@ -11,7 +11,7 @@ import com.synervoz.switchboardonnx.OnnxExtension
 import com.synervoz.switchboardsilerovad.SileroVADExtension
 import com.synervoz.switchboardwhisper.WhisperExtension
 
-class SwitchboardManager(
+class SwitchboardHandler(
     private val context: Context,
     private val onTranscription: (TranscriptionItem) -> Unit = {},
     private val onVadStateChange: (String) -> Unit = {},

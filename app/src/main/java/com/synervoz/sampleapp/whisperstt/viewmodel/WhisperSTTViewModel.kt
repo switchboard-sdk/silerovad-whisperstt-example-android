@@ -6,7 +6,7 @@ import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.synervoz.sampleapp.whisperstt.data.*
-import com.synervoz.sampleapp.whisperstt.switchboard.SwitchboardManager
+import com.synervoz.sampleapp.whisperstt.switchboard.SwitchboardHandler
 import com.synervoz.sampleapp.whisperstt.utils.SystemMonitor
 
 class WhisperSTTViewModel(application: Application) : AndroidViewModel(application) {
@@ -29,7 +29,7 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private val switchboardManager = SwitchboardManager(
+    private val switchboardHandler = SwitchboardHandler(
         context = application,
         onTranscription = { transcription ->
             val current = transcriptions.value ?: emptyList()
@@ -49,48 +49,48 @@ class WhisperSTTViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun initialize() {
-        val success = switchboardManager.initialize("", "")
+        val success = switchboardHandler.initialize("", "")
         if (success) {
             isInitialized.postValue(true)
         }
     }
 
     fun start() {
-        val success = switchboardManager.start()
+        val success = switchboardHandler.start()
         if (success) {
             isRunning.postValue(true)
         }
     }
 
     fun stop() {
-        val success = switchboardManager.stop()
+        val success = switchboardHandler.stop()
         if (success) {
             isRunning.postValue(false)
         }
     }
 
     fun updateVadThreshold(threshold: Float) {
-        switchboardManager.updateVadThreshold(threshold)
+        switchboardHandler.updateVadThreshold(threshold)
     }
 
     fun updateMinSilenceDuration(duration: Int) {
-        switchboardManager.updateMinSilenceDuration(duration)
+        switchboardHandler.updateMinSilenceDuration(duration)
     }
 
     fun setWhisperModel(model: WhisperModel) {
-        switchboardManager.setWhisperModel(model)
+        switchboardHandler.setWhisperModel(model)
     }
 
     fun getVadThreshold(): Float {
-        return switchboardManager.getVadThreshold()
+        return switchboardHandler.getVadThreshold()
     }
 
     fun getMinSilenceDurationMs(): Int {
-        return switchboardManager.getMinSilenceDurationMs()
+        return switchboardHandler.getMinSilenceDurationMs()
     }
 
     fun getWhisperModel(): WhisperModel {
-        return switchboardManager.getWhisperModel()
+        return switchboardHandler.getWhisperModel()
     }
 
     fun clearError() {
