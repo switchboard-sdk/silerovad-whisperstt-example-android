@@ -10,7 +10,6 @@ import com.synervoz.switchboard.sdk.SwitchboardResult
 import com.synervoz.switchboardonnx.OnnxExtension
 import com.synervoz.switchboardsilerovad.SileroVADExtension
 import com.synervoz.switchboardwhisper.WhisperExtension
-import java.io.File
 
 class SwitchboardManager(
     private val context: Context,

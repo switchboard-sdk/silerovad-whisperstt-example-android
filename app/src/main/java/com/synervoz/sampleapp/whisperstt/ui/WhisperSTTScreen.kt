@@ -30,7 +30,6 @@ fun WhisperSTTScreen(
     val transcriptions by viewModel.transcriptions.observeAsState(emptyList())
     val vadState by viewModel.vadState.observeAsState("--")
     val isRunning by viewModel.isRunning.observeAsState(false)
-    val isInitialized by viewModel.isInitialized.observeAsState(false)
     val error by viewModel.error.observeAsState()
     val systemStats by viewModel.systemStats.observeAsState("CPU: -- | Memory: --")
 
