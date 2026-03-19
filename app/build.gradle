@@ -62,19 +62,16 @@ dependencies {
     implementation libs.androidx.compose.material3
     implementation 'androidx.compose.foundation:foundation'
     implementation 'androidx.compose.material:material-icons-core'
-
-    // ViewModel and Compose integration
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0'
     implementation 'androidx.compose.runtime:runtime-livedata'
 
-    // JSON parsing
     implementation 'com.google.code.gson:gson:2.10.1'
 
     // Switchboard SDK and Extensions (AAR files)
-    implementation files('/Users/tayyabjaved/switchboard-sdk/out/SwitchboardSDK/Android/SwitchboardSDK.aar')
-    implementation files('/Users/tayyabjaved/switchboard-sdk/out/SwitchboardWhisper/Android/SwitchboardWhisper.aar')
-    implementation files('/Users/tayyabjaved/switchboard-sdk/out/SwitchboardSileroVAD/Android/SwitchboardSileroVAD.aar')
-    implementation files('/Users/tayyabjaved/switchboard-sdk/out/SwitchboardOnnx/Android/SwitchboardOnnx.aar')
+    implementation 'com.synervoz:switchboardsdk:3.2.1'
+    implementation 'com.synervoz.extensions:whisper:3.2.1'
+    implementation 'com.synervoz.extensions:silerovad:3.2.1'
+    implementation 'com.synervoz.extensions:onnx:3.2.1'
     implementation libs.androidx.rules
 
     testImplementation libs.junit
