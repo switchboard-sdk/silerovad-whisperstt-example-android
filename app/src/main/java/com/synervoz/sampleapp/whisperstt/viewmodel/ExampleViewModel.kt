@@ -9,7 +9,7 @@ import com.synervoz.sampleapp.whisperstt.data.*
 import com.synervoz.sampleapp.whisperstt.switchboard.SwitchboardHandler
 import com.synervoz.sampleapp.whisperstt.utils.SystemMonitor
 
-class WhisperSTTViewModel(application: Application) : AndroidViewModel(application) {
+class ExampleViewModel(application: Application) : AndroidViewModel(application) {
 
     val transcriptions = MutableLiveData<List<TranscriptionItem>>(emptyList())
     val vadState = MutableLiveData<String>("--")

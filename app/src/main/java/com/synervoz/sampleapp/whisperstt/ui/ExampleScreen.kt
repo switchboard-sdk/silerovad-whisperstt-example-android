@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.synervoz.sampleapp.whisperstt.data.TranscriptionItem
 import com.synervoz.sampleapp.whisperstt.data.WhisperModel
-import com.synervoz.sampleapp.whisperstt.viewmodel.WhisperSTTViewModel
+import com.synervoz.sampleapp.whisperstt.viewmodel.ExampleViewModel
 
 @Composable
 fun WhisperSTTScreen(
-    viewModel: WhisperSTTViewModel = viewModel()
+    viewModel: ExampleViewModel = viewModel()
 ) {
     val transcriptions by viewModel.transcriptions.observeAsState(emptyList())
     val vadState by viewModel.vadState.observeAsState("--")

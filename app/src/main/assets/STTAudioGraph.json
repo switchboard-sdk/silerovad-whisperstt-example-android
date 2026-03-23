@@ -18,19 +18,11 @@
         },
         {
           "id": "vadNode",
-          "type": "SileroVAD.VAD",
-          "config": {
-            "frameSize": 512,
-            "threshold": 0.6
-          }
+          "type": "SileroVAD.VAD"
         },
         {
           "id": "sttNode",
-          "type": "Whisper.STT",
-          "config": {
-            "initializeModel": false,
-            "useGPU": false
-          }
+          "type": "Whisper.STT"
         }
       ],
       "connections": [

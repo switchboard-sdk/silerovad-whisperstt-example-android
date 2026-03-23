@@ -26,10 +26,6 @@ class SwitchboardHandler(
         AssetUtils.copyAssetFileToInternal(context, "ggml-tiny.en.bin", "ggml-tiny.en.bin")
         AssetUtils.copyAssetFileToInternal(context, "ggml-base.en.bin", "ggml-base.en.bin")
 
-        Switchboard.loadExtensionLibrary("SwitchboardWhisper")
-        Switchboard.loadExtensionLibrary("SwitchboardOnnx")
-        Switchboard.loadExtensionLibrary("SwitchboardSileroVAD")
-
         WhisperExtension.load()
         OnnxExtension.load()
         SileroVADExtension.load()
