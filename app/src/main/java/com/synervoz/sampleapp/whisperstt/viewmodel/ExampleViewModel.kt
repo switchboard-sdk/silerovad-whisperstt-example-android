@@ -49,7 +49,7 @@ class ExampleViewModel(application: Application) : AndroidViewModel(application)
     }
 
     fun initialize() {
-        val success = switchboardHandler.initialize("", "")
+        val success = switchboardHandler.initialize("appId", "appSecret")
         if (success) {
             isInitialized.postValue(true)
         }

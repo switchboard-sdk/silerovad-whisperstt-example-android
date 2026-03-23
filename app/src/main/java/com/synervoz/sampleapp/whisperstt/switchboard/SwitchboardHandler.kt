@@ -88,24 +88,17 @@ class SwitchboardHandler(
         speechStartedListenerResult.value?.let { vadEventListeners.add(it) }
         speechEndedListenerResult.value?.let { vadEventListeners.add(it) }
 
+        if (loadCurrentWhisperModel().isError) {
+            onError("Failed to load Whisper model")
+            return false
+        }
+
         val startResult = Switchboard.callAction(engineId, "start")
         if (startResult.isError) {
             onError("Failed to start engine")
             return false
         }
 
-        if (loadCurrentWhisperModel().isError) {
-            onError("Failed to load Whisper model")
-            return false
-        }
-
-        return true
-    }
-
-    fun stop(): Boolean {
-        val engineId = this.engineId ?: return true
-        Switchboard.callAction(engineId, "stop")
-        cleanup()
         return true
     }
 
@@ -163,6 +156,13 @@ class SwitchboardHandler(
                 "useGPU" to true
             )
         )
+    }
+
+    fun stop(): Boolean {
+        val engineId = this.engineId ?: return true
+        Switchboard.callAction(engineId, "stop")
+        cleanup()
+        return true
     }
 
     private fun cleanup() {
