@@ -50,8 +50,12 @@ script\setup.bat
 - Transcriptions will appear in real-time
 - Adjust voice activity detector parameters as needed (threshold and silence duration)
 
-# Running Tests
+## Diagrams
+- [Whisper STT App Architecture](./images/architecture.png)
+- [Sequence Diagram](./images/sequence.png)
 
+# Running Tests
+- Checkout `benchmark-tests` branch
 - Open the project in Android Studio
 - Selected `Release` build variant
 - Gradle Sync
