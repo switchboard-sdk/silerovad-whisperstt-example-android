@@ -7,7 +7,6 @@ import com.synervoz.sampleapp.whisperstt.data.WhisperModel
 import com.synervoz.sampleapp.whisperstt.utils.AssetUtils
 import com.synervoz.switchboard.sdk.Switchboard
 import com.synervoz.switchboard.sdk.SwitchboardResult
-import com.synervoz.switchboardonnx.OnnxExtension
 import com.synervoz.switchboardsilerovad.SileroVADExtension
 import com.synervoz.switchboardwhisper.WhisperExtension
 
@@ -27,7 +26,6 @@ class SwitchboardHandler(
         AssetUtils.copyAssetFileToInternal(context, "ggml-base.en.bin", "ggml-base.en.bin")
 
         WhisperExtension.load()
-        OnnxExtension.load()
         SileroVADExtension.load()
 
         val initResult = Switchboard.initialize(
@@ -36,7 +34,6 @@ class SwitchboardHandler(
             appSecret = appSecret,
             extensions = mapOf(
                 "Whisper" to emptyMap<String, Any>(),
-                "Onnx" to emptyMap<String, Any>(),
                 "SileroVAD" to emptyMap<String, Any>()
             )
         )
