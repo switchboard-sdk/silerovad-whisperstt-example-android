@@ -64,3 +64,6 @@ script\setup.bat
 ## View Test Results
 
 Test results will be logged in the last test `zz_printRawResults` with tag `BENCHMARK_RESULTS`
+
+## Integration Guide
+A step-by-step [integration guide](./INTEGRATION.md) is available as well.

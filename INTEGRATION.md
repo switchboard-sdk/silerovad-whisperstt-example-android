@@ -22,6 +22,30 @@ dependencies {
     implementation 'com.synervoz:switchboard.extensions.silerovad:3.2.0'
 }
 ```
+## Dependencies Configuration
+
+You will need the following additions in your Android manifest and app's gradle files.
+
+### Android Manifest (`AndroidManifest.xml`)
+
+Add the following manifest attribute to `application` tag of your `AndroidManifest.xml`
+
+```
+    android:extractNativeLibs="true"
+```
+
+## Application Gradle (`build.gradle`)
+
+Add the following to your app's gradle file's `android` block
+
+```
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+```
+
 
 ## Download Whisper Models
 
@@ -54,12 +78,7 @@ if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
 Setup the Switchboard extensions.`loadExtensionLibrary` load the library of the extension, `load` registers it with the Switchboard SDK.
 
 ```
-Switchboard.loadExtensionLibrary("SwitchboardWhisper")
-Switchboard.loadExtensionLibrary("SwitchboardOnnx")
-Switchboard.loadExtensionLibrary("SwitchboardSileroVAD")
-
 WhisperExtension.load()
-OnnxExtension.load()
 SileroVADExtension.load()
 ```
 
@@ -71,7 +90,6 @@ Switchboard.initialize(
     appSecret = appSecret,
     extensions = mapOf(
         "Whisper" to emptyMap<String, Any>(),
-        "Onnx" to emptyMap<String, Any>(),
         "SileroVAD" to emptyMap<String, Any>()
     )
 )
