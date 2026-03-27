@@ -54,7 +54,7 @@ script\setup.bat
 - Adjust voice activity detector parameters as needed (threshold and silence duration)
 
 ## Diagrams
-- [![Whisper STT App Architecture](./images/architecture.png)]
+- [Whisper STT App Architecture](./images/architecture.png)
 - [Sequence Diagram](./images/sequence.png)
 
 # Running Tests
