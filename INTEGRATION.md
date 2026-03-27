@@ -125,9 +125,11 @@ val result = Switchboard.createEngine(configJson)
 val engineId = result.value
 ```
 
+`STTPlayerExample.json` contains the audio graph defining the audio pipeline.
+
 ## Add Transcription listener
 
-Whisper STT Node emits transcribed event on transcribing speech to text, we need to add a listener to receive the event and associated data.
+Whisper STT Node emits `transcribed` event on transcribing speech to text, we need to add a listener to receive the event and associated data.
 
 ```
 val transcriptionListenerResult = Switchboard.addEventListener(
@@ -142,7 +144,7 @@ val transcriptionListenerResult = Switchboard.addEventListener(
 
 ## Load Whisper Model
 
-We need to call loadModel action on Whisper STT Node with path of the model file.
+We need to call `loadModel` action on Whisper STT Node with path of the model file.
 
 ```
 val modelPath = "${context.filesDir}/ggml-tiny.en.bin"
