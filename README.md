@@ -5,8 +5,6 @@ This project showcases how to use Switchboard SDK and its Whisper STT and Silero
 # Demo Video
 [![Real-time on-device transcription app with Switchboard SDK demo and walkthrough.](http://img.youtube.com/vi/oiH81fEdKEs/0.jpg)](http://www.youtube.com/watch?v=oiH81fEdKEs "Real-time on-device transcription app with Switchboard SDK demo and walkthrough.")
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/oiH81fEdKEs?si=R6KcEPPpGlaapzdv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
 # Setup
 
 ## Prerequisites
@@ -56,7 +54,7 @@ script\setup.bat
 - Adjust voice activity detector parameters as needed (threshold and silence duration)
 
 ## Diagrams
-- [Whisper STT App Architecture](./images/architecture.png)
+- [![Whisper STT App Architecture](./images/architecture.png)]
 - [Sequence Diagram](./images/sequence.png)
 
 # Running Tests
