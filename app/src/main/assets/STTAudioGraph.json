@@ -2,6 +2,8 @@
   "type": "Realtime",
   "config": {
     "microphoneEnabled": true,
+    "performanceMode": 12,
+    "inputPreset": 10,
     "graph": {
       "config": {
         "sampleRate": 16000,
