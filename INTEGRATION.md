@@ -16,10 +16,11 @@ Then you can add the following dependencies:
 
 ```
 dependencies {
-    implementation 'com.synervoz:switchboardsdk:3.2.0'
-    implementation 'com.synervoz:switchboard.extensions.whisper:3.2.0'
-    implementation 'com.synervoz:switchboard.extensions.onnx:3.2.0'
-    implementation 'com.synervoz:switchboard.extensions.silerovad:3.2.0'
+    implementation 'com.synervoz.switchboard:switchboardsdk:3.2.1'
+    implementation 'com.synervoz:switchboard.extensions.whisper:3.2.1'
+    implementation 'com.synervoz:switchboard.extensions.onnx:3.2.1'
+    implementation 'com.synervoz:switchboard.extensions.silerovad:3.2.1'
+    implementation("com.google.code.gson:gson:2.10.1")
 }
 ```
 ## Dependencies Configuration
